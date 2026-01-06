@@ -1,65 +1,169 @@
-import Image from "next/image";
+"use client";
+import { useState } from 'react';
 
-export default function Home() {
+interface SelectedPages {
+  all: boolean;
+  page1: boolean;
+  page2: boolean;
+  page3: boolean;
+  page4: boolean;
+}
+
+interface CheckboxInputProps {
+  checked: boolean;
+  onChange: () => void;
+}
+
+const CheckboxInput: React.FC<CheckboxInputProps> = ({ checked, onChange }) => (
+  <label className="relative inline-flex items-center cursor-pointer">
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      className="sr-only"
+    />
+    <div
+      className="w-6.25 h-6.25 rounded flex items-center justify-center transition-all"
+      style={{
+        border: checked ? '2px solid #2469F6' : '2px solid #d1d5db',
+        backgroundColor: checked ? '#2469F6' : 'white'
+      }}
+    >
+      {checked && (
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+        >
+          <path
+            d="M10 3L4.5 8.5L2 6"
+            stroke="white"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
+    </div>
+  </label>
+);
+
+export default function PageSelector(): JSX.Element {
+  const [selectedPages, setSelectedPages] = useState<SelectedPages>({
+    all: false,
+    page1: false,
+    page2: false,
+    page3: false,
+    page4: false
+  });
+
+  const handleAllPagesToggle = (): void => {
+    const newValue = !selectedPages.all;
+    setSelectedPages({
+      all: newValue,
+      page1: newValue,
+      page2: newValue,
+      page3: newValue,
+      page4: newValue
+    });
+  };
+
+  const handlePageToggle = (page: keyof Omit<SelectedPages, 'all'>): void => {
+    const newSelectedPages: SelectedPages = {
+      ...selectedPages,
+      [page]: !selectedPages[page]
+    };
+
+    const allIndividualSelected =
+      newSelectedPages.page1 &&
+      newSelectedPages.page2 &&
+      newSelectedPages.page3 &&
+      newSelectedPages.page4;
+
+    newSelectedPages.all = allIndividualSelected;
+
+    setSelectedPages(newSelectedPages);
+  };
+
+  const handleDone = (): void => {
+    const selected = (Object.keys(selectedPages) as Array<keyof SelectedPages>)
+      .filter(key => selectedPages[key] && key !== 'all')
+      .map(key => key.replace('page', 'Page '));
+
+    alert(`Selected: ${selected.length > 0 ? selected.join(', ') : 'None'}`);
+  };
+
+  const textStyle: React.CSSProperties = {
+    color: 'rgba(31, 33, 40, 1)',
+    fontFamily: 'Montserrat, sans-serif',
+    fontStyle: 'normal',
+    fontSize: '14px',
+    fontWeight: 400,
+    lineHeight: '130%',
+    letterSpacing: '0px',
+    textAlign: 'left'
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div
+        className="bg-white flex flex-col justify-start items-start"
+        style={{
+          width: '578px',
+          height: '794px',
+          background: 'rgba(255, 255, 255, 1)'
+        }}
+      >
+        <div
+          className="rounded-md flex flex-col justify-start items-start "
+          style={{
+            width: '370px',
+            margin: '104px auto 0',
+            padding: '10px 0px 10px 0px',
+            border: '1px solid rgba(238, 238, 238, 1)',
+            boxShadow: '0px 0px 4px 0px rgba(20, 20, 20, 0.1), 0px 8px 15px 0px rgba(20, 20, 20, 0.12)'
+          }}
+        >
+          {/* All pages option */}
+          <div className="w-full flex items-center justify-between px-6 py-4 border-b-[0.7px]  border-[#CDCDCD] ">
+            <span style={textStyle}>
+              All pages
+            </span>
+            <CheckboxInput
+              checked={selectedPages.all}
+              onChange={handleAllPagesToggle}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </div>
+
+          {/* Individual pages */}
+          {([1, 2, 3, 4] as const).map((num) => (
+            <div
+              key={num}
+              className="w-full flex items-center justify-between px-6 py-4  border-gray-100"
+            >
+              <span style={textStyle}>
+                Page {num}
+              </span>
+              <CheckboxInput
+                checked={selectedPages[`page${num}` as keyof Omit<SelectedPages, 'all'>]}
+                onChange={() => handlePageToggle(`page${num}` as keyof Omit<SelectedPages, 'all'>)}
+              />
+            </div>
+          ))}
+
+          {/* Done button */}
+          <div className="w-full px-3.75 py-2.5 pt-4">
+            <button
+              onClick={handleDone}
+              className="w-full bg-[#FFCE22] hover:bg-[#FFD84D] text-[#1F2128] text-base font-medium rounded-md border-none cursor-pointer transition-all tracking-tight"
+              style={{ padding: '14px 0' }}
+            >
+              Done
+            </button>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -49,7 +49,7 @@ const CheckboxInput: React.FC<CheckboxInputProps> = ({ checked, onChange }) => (
   </label>
 );
 
-export default function PageSelector(): JSX.Element {
+export default function PageSelector() {
   const [selectedPages, setSelectedPages] = useState<SelectedPages>({
     all: false,
     page1: false,

@@ -106,9 +106,9 @@ export default function PageSelector() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center  bg-gray-100">
       <div
-        className="bg-white flex flex-col justify-start items-start"
+        className="bg-white flex flex-col justify-start items-start "
         style={{
           width: '578px',
           height: '794px',
@@ -116,39 +116,42 @@ export default function PageSelector() {
         }}
       >
         <div
-          className="rounded-md flex flex-col justify-start items-start "
+          className="rounded-md flex flex-col justify-start items-start py-3.5 "
           style={{
             width: '370px',
             margin: '104px auto 0',
-            padding: '10px 0px 10px 0px',
             border: '1px solid rgba(238, 238, 238, 1)',
             boxShadow: '0px 0px 4px 0px rgba(20, 20, 20, 0.1), 0px 8px 15px 0px rgba(20, 20, 20, 0.12)'
           }}
         >
-          {/* All pages option */}
-          <div className="w-full flex items-center justify-between px-6 py-4 border-b-[0.7px]  border-[#CDCDCD] ">
-            <span style={textStyle}>
-              All pages
-            </span>
-            <CheckboxInput
-              checked={selectedPages.all}
-              onChange={handleAllPagesToggle}
-            />
+
+          <div className="w-full px-6">
+            <div className="flex items-center justify-between py-4 border-b-[0.7px] border-[#CDCDCD]">
+              <span style={textStyle}>All pages</span>
+              <CheckboxInput
+                checked={selectedPages.all}
+                onChange={handleAllPagesToggle}
+              />
+            </div>
           </div>
 
           {/* Individual pages */}
-          {([1, 2, 3, 4] as const).map((num) => (
-            <div
-              key={num}
-              className="w-full flex items-center justify-between px-6 py-4  border-gray-100"
-            >
-              <span style={textStyle}>
-                Page {num}
-              </span>
-              <CheckboxInput
-                checked={selectedPages[`page${num}` as keyof Omit<SelectedPages, 'all'>]}
-                onChange={() => handlePageToggle(`page${num}` as keyof Omit<SelectedPages, 'all'>)}
-              />
+          {([1, 2, 3, 4] as const).map((num, idx) => (
+            <div key={num} className="w-full px-6">
+              <div
+                className={`flex items-center justify-between py-4 ${idx === 3 ? 'border-b-[0.7px] border-[#CDCDCD]' : ''
+                  }`}
+              >
+                <span style={textStyle}>Page {num}</span>
+                <CheckboxInput
+                  checked={
+                    selectedPages[`page${num}` as keyof Omit<SelectedPages, 'all'>]
+                  }
+                  onChange={() =>
+                    handlePageToggle(`page${num}` as keyof Omit<SelectedPages, 'all'>)
+                  }
+                />
+              </div>
             </div>
           ))}
 

@@ -35,15 +35,9 @@ const Checkbox = ({ checked, onChange, showHover }: CheckboxProps) => {
         `}
       >
         {checked && (
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path
-              d="M10 3L4.5 8.5L2 6"
-              stroke="white"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+<path d="M0.5 7.1L6.53451 12.4672C6.55497 12.4854 6.58626 12.4837 6.6047 12.4635L17.5 0.5" stroke="white" stroke-linecap="round"/>
+</svg>
         )}
       </div>
 
@@ -63,15 +57,10 @@ const Checkbox = ({ checked, onChange, showHover }: CheckboxProps) => {
         pointer-events-none
       "
     >
-      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-        <path
-          d="M10 3L4.5 8.5L2 6"
-          stroke="white"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+<path d="M0.5 7.1L6.53451 12.4672C6.55497 12.4854 6.58626 12.4837 6.6047 12.4635L17.5 0.5" stroke="white" stroke-linecap="round"/>
+</svg>
+      
     </motion.div>
   )}
 </AnimatePresence>
@@ -142,7 +131,7 @@ export default function PageSelector() {
     <div className="w-[578px] h-[794px]
   bg-white flex items-center justify-center">
       <div className="bg-white w-[370px] rounded-md border border-[#eee] border border-[#EEEEEE]
-shadow-[0_0_4px_rgba(20,20,20,0.1),_0_8px_15px_rgba(20,20,20,0.12)] mt-[85px]">
+shadow-[0_0_4px_rgba(20,20,20,0.1),_0_8px_15px_rgba(20,20,20,0.12)] ">
         <Row
           label="All pages"
           checked={selectedPages.all}

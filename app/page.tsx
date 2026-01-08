@@ -1,5 +1,8 @@
 "use client";
-import { useState } from 'react';
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { div } from "framer-motion/client";
 
 interface SelectedPages {
   all: boolean;
@@ -9,45 +12,100 @@ interface SelectedPages {
   page4: boolean;
 }
 
-interface CheckboxInputProps {
+interface CheckboxProps {
   checked: boolean;
   onChange: () => void;
+  showHover: boolean;
 }
 
-const CheckboxInput: React.FC<CheckboxInputProps> = ({ checked, onChange }) => (
-  <label className="relative inline-flex items-center cursor-pointer">
-    <input
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      className="sr-only"
-    />
-    <div
-      className="w-6.25 h-6.25 rounded flex items-center justify-center transition-all"
-      style={{
-        border: checked ? '2px solid #2469F6' : '2px solid #d1d5db',
-        backgroundColor: checked ? '#2469F6' : 'white'
-      }}
+const Checkbox = ({ checked, onChange, showHover }: CheckboxProps) => {
+  return (
+    <label className="relative inline-flex items-center cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="sr-only"
+      />
+
+      {/* BASE CHECKBOX — NEVER TOUCHED */}
+      <div
+        className={`w-6 h-6 rounded border-2 flex items-center justify-center
+          ${checked ? "bg-[#2469F6] border-[#2469F6] hover:bg-[#5087F8]" : "bg-white border-gray-300"}
+        `}
+      >
+        {checked && (
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path
+              d="M10 3L4.5 8.5L2 6"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </div>
+
+      {/* HOVER VARIANT — OVERLAY ONLY */}
+     <AnimatePresence>
+  {showHover && !checked && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0 }} // instant
+      className="
+        absolute inset-0
+        w-6 h-6 rounded
+        bg-[#2469F6] border-2 border-[#2469F6]
+        flex items-center justify-center
+        pointer-events-none
+      "
     >
-      {checked && (
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 12 12"
-          fill="none"
-        >
-          <path
-            d="M10 3L4.5 8.5L2 6"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )}
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <path
+          d="M10 3L4.5 8.5L2 6"
+          stroke="white"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </motion.div>
+  )}
+</AnimatePresence>
+    </label>
+  );
+};
+
+const Row = ({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="flex items-center justify-between px-6 py-4"
+    >
+      <span className="text-sm text-[#1F2128]">{label}</span>
+
+      <Checkbox
+        checked={checked}
+        onChange={onChange}
+        showHover={hovered}
+      />
     </div>
-  </label>
-);
+  );
+};
 
 export default function PageSelector() {
   const [selectedPages, setSelectedPages] = useState<SelectedPages>({
@@ -55,118 +113,75 @@ export default function PageSelector() {
     page1: false,
     page2: false,
     page3: false,
-    page4: false
+    page4: false,
   });
 
-  const handleAllPagesToggle = (): void => {
-    const newValue = !selectedPages.all;
+  const toggleAll = () => {
+    const v = !selectedPages.all;
     setSelectedPages({
-      all: newValue,
-      page1: newValue,
-      page2: newValue,
-      page3: newValue,
-      page4: newValue
+      all: v,
+      page1: v,
+      page2: v,
+      page3: v,
+      page4: v,
     });
   };
 
-  const handlePageToggle = (page: keyof Omit<SelectedPages, 'all'>): void => {
-    const newSelectedPages: SelectedPages = {
-      ...selectedPages,
-      [page]: !selectedPages[page]
-    };
-
-    const allIndividualSelected =
-      newSelectedPages.page1 &&
-      newSelectedPages.page2 &&
-      newSelectedPages.page3 &&
-      newSelectedPages.page4;
-
-    newSelectedPages.all = allIndividualSelected;
-
-    setSelectedPages(newSelectedPages);
-  };
-
-  const handleDone = (): void => {
-    const selected = (Object.keys(selectedPages) as Array<keyof SelectedPages>)
-      .filter(key => selectedPages[key] && key !== 'all')
-      .map(key => key.replace('page', 'Page '));
-
-    alert(`Selected: ${selected.length > 0 ? selected.join(', ') : 'None'}`);
-  };
-
-  const textStyle: React.CSSProperties = {
-    color: 'rgba(31, 33, 40, 1)',
-    fontFamily: 'Montserrat, sans-serif',
-    fontStyle: 'normal',
-    fontSize: '14px',
-    fontWeight: 400,
-    lineHeight: '130%',
-    letterSpacing: '0px',
-    textAlign: 'left'
+  const togglePage = (page: keyof Omit<SelectedPages, "all">) => {
+    const updated = { ...selectedPages, [page]: !selectedPages[page] };
+    updated.all =
+      updated.page1 &&
+      updated.page2 &&
+      updated.page3 &&
+      updated.page4;
+    setSelectedPages(updated);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center  bg-gray-100">
-      <div
-        className="bg-white flex flex-col justify-start items-start "
-        style={{
-          width: '578px',
-          height: '794px',
-          background: 'rgba(255, 255, 255, 1)'
-        }}
-      >
-        <div
-          className="rounded-md flex flex-col justify-start items-start py-3.5 "
-          style={{
-            width: '370px',
-            margin: '104px auto 0',
-            border: '1px solid rgba(238, 238, 238, 1)',
-            boxShadow: '0px 0px 4px 0px rgba(20, 20, 20, 0.1), 0px 8px 15px 0px rgba(20, 20, 20, 0.12)'
-          }}
-        >
+    <div className="flex items-center justify-center min-h-screen bg-[#F5F5F5]">
+    <div className="w-[578px] h-[794px]
+  bg-white flex items-center justify-center">
+      <div className="bg-white w-[370px] rounded-md border border-[#eee] border border-[#EEEEEE]
+shadow-[0_0_4px_rgba(20,20,20,0.1),_0_8px_15px_rgba(20,20,20,0.12)] mt-[85px]">
+        <Row
+          label="All pages"
+          checked={selectedPages.all}
+          onChange={toggleAll}
+        />
+<div className="px-[15px]">
+  <div className="border-t border-[#CDCDCD]" />
+</div>
+        <Row
+          label="Page 1"
+          checked={selectedPages.page1}
+          onChange={() => togglePage("page1")}
+        />
+        <Row
+          label="Page 2"
+          checked={selectedPages.page2}
+          onChange={() => togglePage("page2")}
+        />
+        <Row
+          label="Page 3"
+          checked={selectedPages.page3}
+          onChange={() => togglePage("page3")}
+        />
+        <Row
+          label="Page 4"
+          checked={selectedPages.page4}
+          onChange={() => togglePage("page4")}
+        />
 
-          <div className="w-full px-6">
-            <div className="flex items-center justify-between py-4 border-b-[0.7px] border-[#CDCDCD]">
-              <span style={textStyle}>All pages</span>
-              <CheckboxInput
-                checked={selectedPages.all}
-                onChange={handleAllPagesToggle}
-              />
-            </div>
-          </div>
-
-          {/* Individual pages */}
-          {([1, 2, 3, 4] as const).map((num, idx) => (
-            <div key={num} className="w-full px-6">
-              <div
-                className={`flex items-center justify-between py-4 ${idx === 3 ? 'border-b-[0.7px] border-[#CDCDCD]' : ''
-                  }`}
-              >
-                <span style={textStyle}>Page {num}</span>
-                <CheckboxInput
-                  checked={
-                    selectedPages[`page${num}` as keyof Omit<SelectedPages, 'all'>]
-                  }
-                  onChange={() =>
-                    handlePageToggle(`page${num}` as keyof Omit<SelectedPages, 'all'>)
-                  }
-                />
-              </div>
-            </div>
-          ))}
-
-          {/* Done button */}
-          <div className="w-full px-3.75 py-2.5 pt-4">
-            <button
-              onClick={handleDone}
-              className="w-full bg-[#FFCE22] hover:bg-[#FFD84D] text-[#1F2128] text-base font-medium rounded-md border-none cursor-pointer transition-all tracking-tight"
-              style={{ padding: '14px 0' }}
-            >
-              Done
-            </button>
-          </div>
+<div className="px-[15px]">
+  <div className="border-t border-[#CDCDCD]" />
+</div>
+        <div className="p-4">
+          <button className="w-full bg-[#FFCE22] hover:bg-[#FFD84D] text-[#1F2128] rounded-md py-[14px]">
+            Done
+          </button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
